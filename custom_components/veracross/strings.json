@@ -1,0 +1,166 @@
+{
+  "title": "Veracross",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Veracross parent account",
+        "data": {
+          "username": "Username",
+          "password": "Password",
+          "school": "School URL code"
+        }
+      },
+      "students": {
+        "title": "Students",
+        "data": {
+          "students": "Students"
+        }
+      },
+      "classes": {
+        "title": "Classes for {student}",
+        "description": "Select the classes to show. You can show hidden classes later in student settings.",
+        "data": {
+          "classes": "Classes"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Sign in again",
+        "data": {
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Sign-in failed. Check your parent credentials. SSO (Google/Microsoft) logins are not supported.",
+      "captcha": "The portal requires a CAPTCHA.",
+      "cannot_connect": "Could not connect to Veracross.",
+      "no_students": "No students could be discovered.",
+      "select_student": "Select at least one student.",
+      "invalid_pin": "Use 4\u20138 digits.",
+      "duplicate_pin": "This PIN is already used by a student or the parent."
+    },
+    "abort": {
+      "already_configured": "This parent account is already configured.",
+      "reauth_successful": "Authentication updated."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Account settings",
+        "data": {
+          "parent_pin": "Parent PIN",
+          "pin_lockout": "Lock for 60 seconds after five wrong PINs in 60 seconds",
+          "rediscover": "Re-discover classes (new classes start hidden)"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Sign-in failed. Check your parent credentials. SSO (Google/Microsoft) logins are not supported.",
+      "captcha": "The portal requires a CAPTCHA.",
+      "cannot_connect": "Could not connect to Veracross.",
+      "no_students": "No students could be discovered.",
+      "select_student": "Select at least one student.",
+      "invalid_pin": "Use 4\u20138 digits.",
+      "duplicate_pin": "This PIN is already used by a student or the parent."
+    }
+  },
+  "services": {
+    "enter_pin": {
+      "name": "Enter PIN",
+      "description": "Unlock a student or all students with the parent PIN. With multiple loaded accounts, the PIN may match any account; the first matching account is unlocked and other accounts are locked.",
+      "fields": {
+        "pin": {
+          "name": "PIN",
+          "description": "Student or parent PIN."
+        }
+      }
+    },
+    "lock": {
+      "name": "Lock",
+      "description": "Lock all loaded Veracross accounts."
+    },
+    "refresh": {
+      "name": "Refresh",
+      "description": "Refresh all students of the account, subject to a five-minute throttle. Without student_id, refresh every loaded account.",
+      "fields": {
+        "student_id": {
+          "name": "Student ID",
+          "description": "Optionally choose the account containing this student."
+        }
+      }
+    },
+    "purge": {
+      "name": "Purge history",
+      "description": "Delete old assignment/grade history, feedback, and removed assignments for all loaded accounts. Active assignments and current grades are kept.",
+      "fields": {
+        "before": {
+          "name": "Before",
+          "description": "Delete rows strictly older than this date (YYYY-MM-DD)."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "wrong_pin": {
+      "message": "Wrong PIN"
+    },
+    "locked_out": {
+      "message": "Too many wrong PINs. Try again after 60 seconds."
+    }
+  },
+  "config_subentries": {
+    "student": {
+      "step": {
+        "user": {
+          "title": "Add student",
+          "data": {
+            "student_id": "Student"
+          }
+        },
+        "classes": {
+          "title": "Classes for {student}",
+          "description": "Select the classes to show. You can show hidden classes later in student settings.",
+          "data": {
+            "classes": "Classes"
+          }
+        },
+        "settings": {
+          "title": "Settings for {student}",
+          "description": "Select classes to show and drag them into display order. Continue to edit their display names. Leave PIN empty to disable student PIN access.",
+          "data": {
+            "late_mode": "Late assignments",
+            "pin": "Student PIN",
+            "upcoming_days": "Upcoming days",
+            "classes_order": "Classes in display order"
+          }
+        },
+        "names": {
+          "title": "Class names for {student}",
+          "description": "Edit the entity display names for the selected classes. Use the default name or leave a box empty to clear its override."
+        }
+      },
+      "error": {
+        "invalid_auth": "Sign-in failed. Check your parent credentials. SSO (Google/Microsoft) logins are not supported.",
+        "captcha": "The portal requires a CAPTCHA.",
+        "cannot_connect": "Could not connect to Veracross.",
+        "no_students": "No students could be discovered.",
+        "select_student": "Select at least one student.",
+        "invalid_pin": "Use 4\u20138 digits.",
+        "duplicate_pin": "This PIN is already used by a student or the parent.",
+        "select_class": "Select at least one class.",
+        "invalid_class": "Select each class only once, from this student."
+      },
+      "abort": {
+        "no_students": "All discovered students are already added.",
+        "already_configured": "Student already configured.",
+        "reconfigure_successful": "Student settings updated."
+      },
+      "entry_type": "Student",
+      "initiate_flow": {
+        "user": "Add student",
+        "reconfigure": "Student settings"
+      }
+    }
+  }
+}

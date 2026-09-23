@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Veracross card demo</title>
+  <style>
+    :root {
+      --primary-text-color: #e9eef6;
+      --secondary-text-color: #a9b6c7;
+      --card-background-color: #152235;
+      --divider-color: #33445a;
+      --primary-color: #65b8ff;
+      color-scheme: dark;
+      font-family: system-ui, sans-serif;
+    }
+    body { margin: 0; min-height: 100vh; padding: 32px; background: #0c1624; }
+    .controls { max-width: 1240px; margin: 0 auto 20px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .controls button { padding: 10px 16px; cursor: pointer; }
+    veracross-card { max-width: 1240px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <button data-active="none">Locked</button>
+    <button data-active="S1">Student A</button>
+    <button data-active="S2">Student B</button>
+    <button data-active="all">All students</button>
+    <span>Demo keypad accepts any entry; use the buttons to switch students.</span>
+  </div>
+  <veracross-card id="card"></veracross-card>
+  <script src="../custom_components/veracross/frontend/veracross-card.js"></script>
+  <script>
+    const isoDay = (offset) => {
+      const date = new Date();
+      date.setDate(date.getDate() + offset);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    };
+    const assignment = (class_id, assignment_id, offset, title, overrides = {}) => ({
+      class_id, assignment_id, title, type: "Practice", assigned: isoDay(offset - 5),
+      due: isoDay(offset), status: "Assigned", status_id: 0, problem: false,
+      score: null, max: 10, points: 10, pct: null, counts: true, extra: false,
+      period: "Q1", notes: "", num_feedback: 0, ...overrides,
+    });
+    const datasets = {
+      S1: {
+        student_id: "S1", name: "Student A", late_mode: "separate", data_version: 1,
+        last_success: new Date(Date.now() - 48 * 60000).toISOString(),
+        classes: [
+          { id: "english", name: "English", portal_name: "Grade 6 Language Arts", teacher: "Teacher A",
+            grade: 74.3, letter: "C", grade_source: "calculated", period: "Q1",
+            weighting: "Calculated from graded assignments", categories: [],
+            needs_attention_count: 1, late_count: 1, upcoming_count: 2 },
+          { id: "math", name: "Math", portal_name: "Grade 6 Mathematics", teacher: "Teacher B",
+            grade: 92, letter: "A-", grade_source: "official", period: "Q1",
+            weighting: "Mastery 60% · Practice 40%",
+            categories: [{ type: "Mastery", earned: 138, possible: 150, avg: 92, n: 5, weight: 60 },
+              { type: "Practice", earned: 95, possible: 100, avg: 95, n: 8, weight: 40 }],
+            needs_attention_count: 0, late_count: 0, upcoming_count: 1 },
+          { id: "art", name: "Art", portal_name: "Grade 6 Art", teacher: "Teacher C",
+            grade: null, letter: null, grade_source: "official", period: "Q1", weighting: null,
+            categories: [], needs_attention_count: 0, late_count: 0, upcoming_count: 0 },
+        ],
+        assignments: [
+          assignment("english", 1, -2, "Vocabulary set 4", { status: "Not Turned In", status_id: 1,
+            problem: true, num_feedback: 1,
+            notes: "Complete the final two definitions.\nFor each word, write a sentence showing its meaning.\nKeep the full explanation, including examples and revision notes. <Check your work> & bring it to class." }),
+          assignment("english", 2, -1, "Personal narrative", { status: "Late", status_id: 7, problem: true,
+            notes: "Upload the revised draft with peer feedback." }),
+          assignment("english", 3, 1, "Read chapters 8–10"),
+          assignment("english", 4, 4, "Theme paragraph", { type: "Mastery" }),
+          assignment("english", 5, -1, "Reading reflection", { status: "Turned In / Not Graded", status_id: 6 }),
+          assignment("math", 6, 1, "Systems of equations quiz", { type: "Mastery" }),
+          ...Array.from({ length: 8 }, (_, i) => assignment("math", 10 + i, -i - 1, `Problem set ${8 - i}`,
+            { status: "Graded", status_id: 2, score: 19, max: 20, points: 20, pct: 95,
+              notes: "Show each step.\nInclude a check of your solution." })),
+        ],
+        needs_attention: [{ class_id: "english", assignment_id: 1 }],
+        late: [{ class_id: "english", assignment_id: 2 }],
+        feedback: [{ class_id: "english", assignment_id: 1, feedback_id: 1, person: "Teacher A",
+          date: isoDay(-1), message: "Please finish these definitions.\nYour first examples are clear & thoughtful." }],
+      },
+      S2: {
+        student_id: "S2", name: "Student B", late_mode: "listed", data_version: 1,
+        last_success: new Date(Date.now() - 14 * 3600000).toISOString(),
+        classes: [{ id: "science", name: "Science", portal_name: "Grade 7 Science", teacher: "Teacher D",
+          grade: 86.25, letter: "B", grade_source: "official", period: "Q1", weighting: null,
+          categories: [], needs_attention_count: 0, late_count: 1, upcoming_count: 1 }],
+        assignments: [
+          assignment("science", 1, -1, "Lab reflection", { status: "Late", status_id: 7, problem: true }),
+          assignment("science", 2, 2, "Prepare lab observations"),
+        ],
+        needs_attention: [{ class_id: "science", assignment_id: 1 }],
+        late: [{ class_id: "science", assignment_id: 1 }], feedback: [],
+      },
+    };
+    const accountEntity = "sensor.veracross_active_student";
+    const states = { [accountEntity]: { state: "none", attributes: { student_name: null, unlocked_at: null, locked_out_until: null } } };
+    for (const student of Object.values(datasets)) {
+      states[`sensor.veracross_${student.student_id.toLowerCase()}_summary`] = {
+        state: String(student.classes.reduce((sum, item) => sum + item.needs_attention_count, 0)),
+        attributes: { student: student.name, student_id: student.student_id, late_mode: student.late_mode,
+          last_success: student.last_success, refreshing: false, throttled_until: null,
+          upcoming_total: student.classes.reduce((sum, item) => sum + item.upcoming_count, 0),
+          late_total: 1, data_version: student.data_version,
+          classes: student.classes.map(item => ({ id: item.id, name: item.name,
+            entity_id: `sensor.veracross_${student.student_id.toLowerCase()}_${item.id}` })),
+        },
+      };
+    }
+    const card = document.querySelector("veracross-card");
+    const publish = () => { card.hass = { ...hass, states: { ...states } }; };
+    const setActive = (active) => {
+      states[accountEntity] = { state: active, attributes: {
+        student_name: datasets[active]?.name ?? null,
+        unlocked_at: active === "none" ? null : new Date().toISOString(), locked_out_until: null,
+      } };
+      publish();
+    };
+    const hass = {
+      states,
+      async callWS({ type, student_id }) {
+        const active = states[accountEntity].state;
+        if (type === "veracross/students") return active === "all"
+          ? Object.values(datasets).map(({ student_id, name }) => ({ student_id, name })) : [];
+        if (type === "veracross/student" && (active === "all" || active === student_id) && datasets[student_id]) {
+          return structuredClone(datasets[student_id]);
+        }
+        throw Error("not_allowed");
+      },
+      async callService(domain, service, data, target, blocking, returnResponse) {
+        if (domain !== "veracross") throw Error("unknown_domain");
+        if (service === "enter_pin") {
+          const active = data.pin ? "S1" : null;
+          if (!active) throw Error("wrong_pin");
+          setActive(active);
+          return { response: { active, student_name: datasets[active]?.name ?? null } };
+        }
+        if (service === "lock") { setActive("none"); return; }
+        if (service !== "refresh") throw Error("unknown_service");
+        const summaries = Object.values(states).filter(item => item.attributes.student_id);
+        if (summaries.some(item => item.attributes.refreshing || new Date(item.attributes.throttled_until) > new Date())) return;
+        summaries.forEach(item => { item.attributes.refreshing = true; });
+        publish();
+        setTimeout(() => {
+          for (const summary of summaries) {
+            const student = datasets[summary.attributes.student_id];
+            student.data_version++;
+            student.last_success = new Date().toISOString();
+            Object.assign(summary.attributes, { refreshing: false, last_success: student.last_success,
+              data_version: student.data_version, throttled_until: new Date(Date.now() + 300000).toISOString() });
+          }
+          publish();
+        }, 1300);
+      },
+    };
+    document.querySelector(".controls").addEventListener("click", event => {
+      const button = event.target.closest("[data-active]");
+      if (button) setActive(button.dataset.active);
+    });
+    card.setConfig({ account_entity: accountEntity, upcoming_days: 7, schedule: ["06:00", "15:00"] });
+    publish();
+  </script>
+</body>
+</html>

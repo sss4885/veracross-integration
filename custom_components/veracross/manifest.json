@@ -1,0 +1,17 @@
+{
+  "domain": "veracross",
+  "name": "Veracross",
+  "codeowners": [
+    "@sss4885"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "frontend",
+    "http"
+  ],
+  "documentation": "https://github.com/sss4885/veracross-integration",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/sss4885/veracross-integration/issues",
+  "version": "0.2.0"
+}

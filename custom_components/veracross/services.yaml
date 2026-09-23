@@ -1,0 +1,48 @@
+{
+  "enter_pin": {
+    "name": "Enter PIN",
+    "description": "Unlock a student or all students with the parent PIN. With multiple loaded accounts, the PIN may match any account; the first matching account is unlocked and other accounts are locked.",
+    "fields": {
+      "pin": {
+        "name": "PIN",
+        "description": "Student or parent PIN.",
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "lock": {
+    "name": "Lock",
+    "description": "Lock all loaded Veracross accounts."
+  },
+  "refresh": {
+    "name": "Refresh",
+    "description": "Refresh all students of the account, subject to a five-minute throttle. Without student_id, refresh every loaded account.",
+    "fields": {
+      "student_id": {
+        "name": "Student ID",
+        "description": "Optionally choose the account containing this student.",
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "purge": {
+    "name": "Purge history",
+    "description": "Delete old assignment/grade history, feedback, and removed assignments for all loaded accounts. Active assignments and current grades are kept.",
+    "fields": {
+      "before": {
+        "name": "Before",
+        "description": "Delete rows strictly older than this date (YYYY-MM-DD).",
+        "required": true,
+        "selector": {
+          "date": {}
+        }
+      }
+    }
+  }
+}
