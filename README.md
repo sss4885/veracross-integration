@@ -2,6 +2,11 @@
 
 See your children's grades, upcoming work, missing assignments, and teacher feedback in Home Assistant. A standalone Veracross card brings everything together on a family dashboard or wall tablet.
 
+<p align="center">
+  <img src="docs/screenshots/02_student_overview.png" width="48%" alt="Veracross Card Overview" />
+  <img src="docs/screenshots/03_assignment_feedback_expanded.png" width="48%" alt="Assignment Feedback and Details" />
+</p>
+
 This is an **unofficial integration, not affiliated with Veracross**. It reads the parent portal and makes **GET requests only after login**; it cannot submit assignments or change school records. Check your school's acceptable-use terms before connecting it.
 
 Requires Home Assistant **2026.9.0 or newer**. Tested against 2026.9.3.
@@ -196,6 +201,25 @@ schedule:
 `upcoming_days` controls the card's coming-up window (default 7). `schedule` is a nonempty list of local `HH:MM` times used for the footer's next-refresh display; **it does not schedule requests**. Match it to your refresh automation.
 
 The card includes a PIN keypad, parent student switcher, eye toggle to mask overall grades, class chips, an overview and individual class sections, expandable assignment rows with **full notes and teacher comments**, Late handling matching the selected mode, refresh, and lock controls. It does not navigate to the school portal.
+
+### Card views
+
+| Student overview | Class breakdown & categories |
+|:---:|:---:|
+| <img src="docs/screenshots/02_student_overview.png" width="100%" alt="Student Overview" /> | <img src="docs/screenshots/04_class_categories_math.png" width="100%" alt="Class View with Categories" /> |
+
+| Teacher feedback & notes | Parent multi-student switcher |
+|:---:|:---:|
+| <img src="docs/screenshots/03_assignment_feedback_expanded.png" width="100%" alt="Teacher Feedback and Notes" /> | <img src="docs/screenshots/05_parent_multi_student.png" width="100%" alt="Parent Multi-Student Switcher" /> |
+
+<details>
+<summary><b>Wall tablet PIN keypad & Privacy mode</b></summary>
+
+| Locked keypad | Privacy mode (masked grades) |
+|:---:|:---:|
+| <img src="docs/screenshots/01_keypad_locked.png" width="100%" alt="PIN Keypad" /> | <img src="docs/screenshots/06_privacy_masked.png" width="100%" alt="Privacy Mode" /> |
+
+</details>
 
 For a kiosk, call `veracross.lock` whenever your navigation script leaves the school view and when the screensaver starts. For example, if your kiosk maintains an `input_boolean.kiosk_screensaver` helper:
 
